@@ -2,6 +2,7 @@
   <q-layout>
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
+        <q-btn flat icon="info" @click="showAbout" class="q-ml-auto bg-white text-primary" />
         <q-toolbar-title>kNote</q-toolbar-title>
         <q-btn flat icon="add" @click="addNote" class="q-ml-auto bg-white text-primary" />
       </q-toolbar>
@@ -46,6 +47,30 @@
       </q-card>
     </q-dialog>
 
+    <!-- Modal for about -->
+    <q-dialog v-model="isAboutDialogVisible" persistent>
+      <q-card style="width: 90%">
+        <q-card-section>
+          <div>
+            <h5>About kNote</h5>
+            <p>A simple note-taking app to manage your thoughts and ideas.</p>
+            
+            <h6>Usage Tips:</h6>
+            <ul>
+              <li>Swipe right to delete a note.</li>
+              <li>Swipe left to mark/unmark a note as done.</li>
+            </ul>
+            
+            <p><strong>License:</strong> MIT</p>
+            <p><strong>Author:</strong> Alessandro Cattabiani</p>
+          </div>
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn icon="close" color="red" @click="isAboutDialogVisible = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </q-layout>
 </template>
 
@@ -61,6 +86,7 @@ const editNoteId = ref(-1);
 const editNoteText = ref("");
 const noteInput = ref(null);
 const timer = ref(null);
+const isAboutDialogVisible = ref(false);
 
 // Method to finalize actions after a short delay
 const finalize = (reset) => {
@@ -69,7 +95,10 @@ const finalize = (reset) => {
   }, 0);
 };
 
-
+const showAbout = () => {
+  // Logic to show the about dialog
+  isAboutDialogVisible.value = true; // Set the dialog to visible
+};
 
 
 // Handling note deletion on swipe left
