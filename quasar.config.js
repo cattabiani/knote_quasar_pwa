@@ -11,7 +11,6 @@
 
 const { configure } = require('quasar/wrappers');
 
-
 module.exports = configure(function (/* ctx */) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
@@ -58,7 +57,7 @@ module.exports = configure(function (/* ctx */) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      // publicPath: '/',
+      publicPath: '/knote_quasar_pwa/',
       // analyze: true,
       // env: {},
       // rawDefine: {}
@@ -75,7 +74,7 @@ module.exports = configure(function (/* ctx */) {
           eslint: {
             lintCommand: 'eslint "./**/*.{js,mjs,cjs,vue}"'
           }
-        }, { server: false }]
+        }, { server: false }],
       ]
     },
 
@@ -150,8 +149,30 @@ module.exports = configure(function (/* ctx */) {
       // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
       // extendInjectManifestOptions (cfg) {},
-      // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
+      extendManifestJson (json) {
+        Object.assign(json, {
+          name: 'kNote',
+          short_name: 'kNote',
+          description: 'A simple note-taking app to manage your thoughts and ideas.',
+          display: 'standalone',
+          start_url: './',
+          theme_color: '#1976D2', // Quasar primary color
+          background_color: '#ffffff', // Default background color
+          icons: [
+            {
+              src: '/knote_quasar_pwa/icons/icon-192x192.png', // Make sure these paths are correct
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: '/knote_quasar_pwa/icons/icon-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
+            }
+          ]
+        });
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova

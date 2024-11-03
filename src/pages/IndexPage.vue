@@ -55,7 +55,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { LocalStorage } from 'quasar';
 
 // State variables
-const notes = ref(LocalStorage.getItem('notes') || []);
+const storedNotes = LocalStorage.getItem('notes') || [];
+const notes = ref(Array.isArray(storedNotes) ? storedNotes : JSON.parse(storedNotes || '[]'));
 const editNoteId = ref(-1);
 const editNoteText = ref("");
 const noteInput = ref(null);
@@ -67,6 +68,9 @@ const finalize = (reset) => {
     reset?.(); // Optional chaining to call reset if defined
   }, 0);
 };
+
+
+
 
 // Handling note deletion on swipe left
 const onLeft = ({ reset }, index) => {
