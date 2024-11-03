@@ -54,13 +54,11 @@
           <div>
             <h5>About kNote</h5>
             <p>A simple note-taking app to manage your thoughts and ideas.</p>
-            
             <h6>Usage Tips:</h6>
             <ul>
               <li>Swipe right to delete a note.</li>
               <li>Swipe left to mark/unmark a note as done.</li>
             </ul>
-            
             <p><strong>License:</strong> MIT</p>
             <p><strong>Author:</strong> Alessandro Cattabiani</p>
           </div>
