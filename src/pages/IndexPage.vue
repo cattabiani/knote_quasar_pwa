@@ -2,9 +2,9 @@
   <q-layout>
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
+        <q-toolbar-title style="font-size: 28px;">kNote</q-toolbar-title>
         <q-btn flat icon="info" @click="showAbout" class="q-ml-auto bg-white text-primary" aria-label="About kNote" />
-        <q-toolbar-title>kNote</q-toolbar-title>
-        <q-btn flat icon="add" @click="addNote" class="q-ml-auto bg-white text-primary" aria-label="Add a new note" />
+        <q-btn flat icon="add" @click="addNote" class="q-ml-md bg-white text-primary" aria-label="Add a new note" />
       </q-toolbar>
     </q-header>
 
@@ -27,12 +27,20 @@
             </template>
 
             <q-item clickable :class="index % 2 === 0 ? 'bg-grey-1' : 'bg-white'">
-              <q-item-section lines="2" :class="[note.done ? 'text-decoration-line-through' : '']">{{ note.text }}</q-item-section>
+              <q-item-section lines="2" :class="[note.done ? 'text-decoration-line-through' : '']" >{{ note.text }}</q-item-section>
             </q-item>
           </q-slide-item>
         </q-list>
+
+    <!-- empty state -->
+    <div v-if="notes.length === 0" style="padding: 20px;">
+      <AboutContent />
+    </div>
+
       </q-page>
     </q-page-container>
+
+
 
     <!-- Modal for adding/editing a note -->
     <q-dialog v-model="isEditNoteModalVisible" persistent @open="focusInput">
@@ -50,19 +58,7 @@
     <!-- Modal for about -->
     <q-dialog v-model="isAboutDialogVisible" persistent>
       <q-card style="width: 90%">
-        <q-card-section>
-          <div>
-            <h5>About kNote</h5>
-            <p>A simple note-taking app to manage your thoughts and ideas.</p>
-            <h6>Usage Tips:</h6>
-            <ul>
-              <li>Swipe right to delete a note.</li>
-              <li>Swipe left to mark/unmark a note as done.</li>
-            </ul>
-            <p><strong>License:</strong> MIT</p>
-            <p><strong>Author:</strong> Alessandro Cattabiani</p>
-          </div>
-        </q-card-section>
+        <q-card-section><AboutContent /></q-card-section>
         <q-card-actions align="center">
           <q-btn icon="close" color="red" @click="isAboutDialogVisible = false" />
         </q-card-actions>
@@ -76,6 +72,7 @@
 import { ref, computed, nextTick, onBeforeUnmount } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { LocalStorage } from 'quasar';
+import AboutContent from '../components/AboutContent.vue';
 
 // State variables
 const storedNotes = LocalStorage.getItem('notes') || [];
@@ -185,10 +182,10 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .q-item:hover {
-  background-color: transparent !important;
+  background-color: transparent !important; /* Ensure no background on hover */
 }
 
 .text-decoration-line-through {
-  text-decoration: line-through;
+  text-decoration: line-through; /* Apply strikethrough text decoration */
 }
 </style>
