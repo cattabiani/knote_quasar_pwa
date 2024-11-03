@@ -3,7 +3,16 @@
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
         <q-toolbar-title style="font-size: 28px;">kNote</q-toolbar-title>
-        <q-btn flat icon="info" @click="showAbout" class="q-ml-auto bg-white text-primary" aria-label="About kNote" />
+        <q-btn 
+          v-if="installEvent" 
+          flat icon="download"
+          @click="installEvent.prompt()" 
+          class="q-ml-md bg-white text-primary" 
+          aria-label="Install kNote"
+        >
+          Install me!
+        </q-btn>
+        <q-btn flat icon="info" @click="showAbout" class="q-ml-md bg-white text-primary" aria-label="About kNote" />
         <q-btn flat icon="add" @click="addNote" class="q-ml-md bg-white text-primary" aria-label="Add a new note" />
       </q-toolbar>
     </q-header>
@@ -71,7 +80,7 @@
 <script setup>
 import { ref, computed, nextTick, onBeforeUnmount } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import { LocalStorage } from 'quasar';
+import { LocalStorage, useQuasar } from 'quasar';
 import AboutContent from '../components/AboutContent.vue';
 
 // State variables
@@ -82,6 +91,8 @@ const editNoteText = ref("");
 const noteInput = ref(null);
 const timer = ref(null);
 const isAboutDialogVisible = ref(false);
+const $q = useQuasar();
+const installEvent = ref(null);
 
 // Method to finalize actions after a short delay
 const finalize = (reset) => {
@@ -172,7 +183,45 @@ window.addEventListener('visibilitychange', () => {
   }
 });
 
+const installPromptHandler = (event) => {
+  event.preventDefault(); // Prevent the default prompt from appearing
+
+  installEvent.value = event;
+
+  // // Wait for 5 seconds before showing the install notification
+  // setTimeout(() => {
+  //   $q.notify({
+  //     message: 'Install me!',
+  //     color: 'blue',
+  //     icon: 'cloud_download',
+  //     timeout: 5000,
+  //     actions: [
+  //       {
+  //         label: 'Install',
+  //         color: 'white',
+  //         handler: () => {
+  //           event.prompt(); // Show the install prompt
+  //           event.userChoice.then((choiceResult) => {
+  //             if (choiceResult.outcome === 'accepted') {
+  //               console.log('User accepted the install prompt');
+  //             } else {
+  //               console.log('User dismissed the install prompt');
+  //             }
+  //           });
+  //         }
+  //       }
+  //     ]
+  //   });
+  // }, 5000);
+};
+
+
+
+
+window.addEventListener('beforeinstallprompt', installPromptHandler);
+
 onBeforeUnmount(() => {
+  window.removeEventListener('beforeinstallprompt', installPromptHandler);
   window.removeEventListener('beforeunload', save);
   window.removeEventListener('visibilitychange', save);
   clearTimeout(timer.value);
