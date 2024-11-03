@@ -161,16 +161,29 @@ module.exports = configure(function (/* ctx */) {
           background_color: '#ffffff', // Default background color
           icons: [
             {
-              src: '/knote_quasar_pwa/icons/icon-192x192.png', // Make sure these paths are correct
+              src: 'icons/icon-192x192.png', // Make sure these paths are correct
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/knote_quasar_pwa/icons/icon-512x512.png',
+              src: 'icons/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png'
-            }
-          ]
+            }],
+            "screenshots": [
+              {
+                "src": "screenshots/screenshot-1.jpeg",
+                "sizes": "985x2048",
+                "type": "image/jpeg",
+                "form_factor": "wide"
+              },
+              {
+                "src": "screenshots/screenshot-2.jpeg",
+                "sizes": "985x2048",
+                "type": "image/jpeg"
+              }
+              // Add more screenshots if necessary
+            ]
         });
       }
     },

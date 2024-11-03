@@ -2,9 +2,9 @@
   <q-layout>
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-btn flat icon="info" @click="showAbout" class="q-ml-auto bg-white text-primary" />
+        <q-btn flat icon="info" @click="showAbout" class="q-ml-auto bg-white text-primary" aria-label="About kNote" />
         <q-toolbar-title>kNote</q-toolbar-title>
-        <q-btn flat icon="add" @click="addNote" class="q-ml-auto bg-white text-primary" />
+        <q-btn flat icon="add" @click="addNote" class="q-ml-auto bg-white text-primary" aria-label="Add a new note" />
       </q-toolbar>
     </q-header>
 
