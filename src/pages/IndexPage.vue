@@ -3,17 +3,25 @@
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
         <q-toolbar-title style="font-size: 28px;">kNote</q-toolbar-title>
+        <q-btn flat icon="info" @click="showAbout" class="q-ml-md bg-white text-primary" aria-label="About kNote" />
         <q-btn 
-          v-if="installEvent" 
+          flat 
+          icon="checklist" 
+          @click="isCheckList = !isCheckList" 
+          class="q-ml-md bg-white text-primary" 
+          aria-label="Activate Checklist Mode" 
+        />
+        <q-btn flat icon="add" @click="addNote" class="q-ml-md bg-white text-primary" aria-label="Add a new note" />
+      </q-toolbar>
+      <q-toolbar v-if="installEvent" >
+        <q-btn 
           flat icon="download"
           @click="installEvent.prompt()" 
-          class="q-ml-md bg-white text-primary" 
+          class="q-ml-auto q-mr-auto bg-white text-primary" 
           aria-label="Install kNote"
         >
           Install me!
         </q-btn>
-        <q-btn flat icon="info" @click="showAbout" class="q-ml-md bg-white text-primary" aria-label="About kNote" />
-        <q-btn flat icon="add" @click="addNote" class="q-ml-md bg-white text-primary" aria-label="Add a new note" />
       </q-toolbar>
     </q-header>
 
@@ -36,7 +44,13 @@
             </template>
 
             <q-item clickable :class="index % 2 === 0 ? 'bg-grey-1' : 'bg-white'">
-              <q-item-section lines="2" :class="[note.done ? 'text-decoration-line-through' : '']" >{{ note.text }}</q-item-section>
+              <q-item-section lines="2" :class="[note.done && !isCheckList ? 'text-decoration-line-through' : '']" >
+                <div class="q-gutter-sm" style="display: flex; align-items: left;">
+                  <q-icon v-if="isCheckList && note.done" name="check_circle" class="text-green q-mr-md" />
+                  <q-icon v-else-if="isCheckList && !note.done" name="radio_button_unchecked" class="q-mr-md" />
+                  {{ note.text }}
+                </div>
+              </q-item-section>
             </q-item>
           </q-slide-item>
         </q-list>
@@ -93,6 +107,7 @@ const timer = ref(null);
 const isAboutDialogVisible = ref(false);
 const $q = useQuasar();
 const installEvent = ref(null);
+const isCheckList = ref(LocalStorage.getItem('isCheckList') || false);
 
 // Method to finalize actions after a short delay
 const finalize = (reset) => {
@@ -171,6 +186,7 @@ const editNote = (index) => {
 
 const save = () => {
   LocalStorage.set('notes', notes.value);
+  LocalStorage.set('isCheckList', isCheckList.value);
 }
 
 window.addEventListener('beforeunload', () => {
