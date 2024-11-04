@@ -48,7 +48,7 @@
                 <div class="q-gutter-sm" style="display: flex; align-items: left;">
                   <q-icon v-if="isCheckList && note.done" name="check_circle" class="text-green q-mr-md" />
                   <q-icon v-else-if="isCheckList && !note.done" name="radio_button_unchecked" class="q-mr-md" />
-                  {{ note.text }}
+                  {{ note.text || "New Note" }}
                 </div>
               </q-item-section>
             </q-item>
@@ -203,32 +203,6 @@ const installPromptHandler = (event) => {
   event.preventDefault(); // Prevent the default prompt from appearing
 
   installEvent.value = event;
-
-  // // Wait for 5 seconds before showing the install notification
-  // setTimeout(() => {
-  //   $q.notify({
-  //     message: 'Install me!',
-  //     color: 'blue',
-  //     icon: 'cloud_download',
-  //     timeout: 5000,
-  //     actions: [
-  //       {
-  //         label: 'Install',
-  //         color: 'white',
-  //         handler: () => {
-  //           event.prompt(); // Show the install prompt
-  //           event.userChoice.then((choiceResult) => {
-  //             if (choiceResult.outcome === 'accepted') {
-  //               console.log('User accepted the install prompt');
-  //             } else {
-  //               console.log('User dismissed the install prompt');
-  //             }
-  //           });
-  //         }
-  //       }
-  //     ]
-  //   });
-  // }, 5000);
 };
 
 
