@@ -2,22 +2,35 @@
   <q-layout>
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-toolbar-title style="font-size: 28px;">kNote</q-toolbar-title>
-        <q-btn flat icon="info" @click="showAbout" class="q-ml-md bg-white text-primary" aria-label="About kNote" />
-        <q-btn 
-          flat 
-          icon="checklist" 
-          @click="isCheckList = !isCheckList" 
-          class="q-ml-md bg-white text-primary" 
-          aria-label="Activate Checklist Mode" 
+        <q-toolbar-title style="font-size: 28px">kNote</q-toolbar-title>
+        <q-btn
+          flat
+          icon="info"
+          @click="showAbout"
+          class="q-ml-md bg-white text-primary"
+          aria-label="About kNote"
         />
-        <q-btn flat icon="add" @click="addNote" class="q-ml-md bg-white text-primary" aria-label="Add a new note" />
+        <q-btn
+          flat
+          icon="checklist"
+          @click="isCheckList = !isCheckList"
+          class="q-ml-md bg-white text-primary"
+          aria-label="Activate Checklist Mode"
+        />
+        <q-btn
+          flat
+          icon="add"
+          @click="addNote"
+          class="q-ml-md bg-white text-primary"
+          aria-label="Add a new note"
+        />
       </q-toolbar>
-      <q-toolbar v-if="installEvent" >
-        <q-btn 
-          flat icon="download"
-          @click="installEvent.prompt()" 
-          class="q-ml-auto q-mr-auto bg-white text-primary" 
+      <q-toolbar v-if="installEvent">
+        <q-btn
+          flat
+          icon="download"
+          @click="installEvent.prompt()"
+          class="q-ml-auto q-mr-auto bg-white text-primary"
           aria-label="Install kNote"
         >
           Install me!
@@ -33,7 +46,8 @@
             :key="index"
             @left="(event) => onLeft(event, rIndex(index))"
             @right="(event) => onRight(event, rIndex(index))"
-            left-color="red" right-color="green"
+            left-color="red"
+            right-color="green"
             @dblclick="editNote(rIndex(index))"
           >
             <template v-slot:left>
@@ -43,11 +57,32 @@
               <q-icon name="done" background-color="green" />
             </template>
 
-            <q-item clickable :class="index % 2 === 0 ? 'bg-grey-1' : 'bg-white'">
-              <q-item-section lines="2" :class="[note.done && !isCheckList ? 'text-decoration-line-through' : '']" >
-                <div class="q-gutter-sm" style="display: flex; align-items: left;">
-                  <q-icon v-if="isCheckList && note.done" name="check_circle" class="text-green q-mr-md" />
-                  <q-icon v-else-if="isCheckList && !note.done" name="radio_button_unchecked" class="q-mr-md" />
+            <q-item
+              clickable
+              :class="index % 2 === 0 ? 'bg-grey-1' : 'bg-white'"
+            >
+              <q-item-section
+                lines="2"
+                :class="[
+                  note.done && !isCheckList
+                    ? 'text-decoration-line-through'
+                    : '',
+                ]"
+              >
+                <div
+                  class="q-gutter-sm"
+                  style="display: flex; align-items: left"
+                >
+                  <q-icon
+                    v-if="isCheckList && note.done"
+                    name="check_circle"
+                    class="text-green q-mr-md"
+                  />
+                  <q-icon
+                    v-else-if="isCheckList && !note.done"
+                    name="radio_button_unchecked"
+                    class="q-mr-md"
+                  />
                   {{ note.text || "New Note" }}
                 </div>
               </q-item-section>
@@ -55,21 +90,25 @@
           </q-slide-item>
         </q-list>
 
-    <!-- empty state -->
-    <div v-if="notes.length === 0" style="padding: 20px;">
-      <AboutContent />
-    </div>
-
+        <!-- empty state -->
+        <div v-if="notes.length === 0" style="padding: 20px">
+          <AboutContent />
+        </div>
       </q-page>
     </q-page-container>
-
-
 
     <!-- Modal for adding/editing a note -->
     <q-dialog v-model="isEditNoteModalVisible" persistent @open="focusInput">
       <q-card style="width: 90%">
         <q-card-section>
-          <q-input ref="noteInput" v-model="editNoteText" label="Note" autogrow outlined type="textarea" />
+          <q-input
+            ref="noteInput"
+            v-model="editNoteText"
+            label="Note"
+            autogrow
+            outlined
+            type="textarea"
+          />
         </q-card-section>
         <q-card-actions align="center">
           <q-btn icon="close" color="red" @click="closeModal" />
@@ -83,23 +122,28 @@
       <q-card style="width: 90%">
         <q-card-section><AboutContent /></q-card-section>
         <q-card-actions align="center">
-          <q-btn icon="close" color="red" @click="isAboutDialogVisible = false" />
+          <q-btn
+            icon="close"
+            color="red"
+            @click="isAboutDialogVisible = false"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
-
   </q-layout>
 </template>
 
 <script setup>
-import { ref, computed, nextTick, onBeforeUnmount } from 'vue';
-import { v4 as uuidv4 } from 'uuid';
-import { LocalStorage, useQuasar } from 'quasar';
-import AboutContent from '../components/AboutContent.vue';
+import { ref, computed, nextTick, onBeforeUnmount } from "vue";
+import { v4 as uuidv4 } from "uuid";
+import { LocalStorage, useQuasar } from "quasar";
+import AboutContent from "../components/AboutContent.vue";
 
 // State variables
-const storedNotes = LocalStorage.getItem('notes') || [];
-const notes = ref(Array.isArray(storedNotes) ? storedNotes : JSON.parse(storedNotes || '[]'));
+const storedNotes = LocalStorage.getItem("notes") || [];
+const notes = ref(
+  Array.isArray(storedNotes) ? storedNotes : JSON.parse(storedNotes || "[]")
+);
 const editNoteId = ref(-1);
 const editNoteText = ref("");
 const noteInput = ref(null);
@@ -107,7 +151,7 @@ const timer = ref(null);
 const isAboutDialogVisible = ref(false);
 const $q = useQuasar();
 const installEvent = ref(null);
-const isCheckList = ref(LocalStorage.getItem('isCheckList') || false);
+const isCheckList = ref(LocalStorage.getItem("isCheckList") || false);
 
 // Method to finalize actions after a short delay
 const finalize = (reset) => {
@@ -120,7 +164,6 @@ const showAbout = () => {
   // Logic to show the about dialog
   isAboutDialogVisible.value = true; // Set the dialog to visible
 };
-
 
 // Handling note deletion on swipe left
 const onLeft = ({ reset }, index) => {
@@ -152,7 +195,7 @@ const addNote = () => {
 // Save note and close the modal
 const saveAndCloseModal = () => {
   if (editNoteId.value >= notes.value.length) {
-    notes.value.push({id: uuidv4(), text: editNoteText.value, done: false });
+    notes.value.push({ id: uuidv4(), text: editNoteText.value, done: false });
   } else {
     notes.value[editNoteId.value].text = editNoteText.value;
   }
@@ -185,16 +228,16 @@ const editNote = (index) => {
 };
 
 const save = () => {
-  LocalStorage.set('notes', notes.value);
-  LocalStorage.set('isCheckList', isCheckList.value);
-}
+  LocalStorage.set("notes", notes.value);
+  LocalStorage.set("isCheckList", isCheckList.value);
+};
 
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   save();
 });
 
-window.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') {
+window.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
     save();
   }
 });
@@ -205,18 +248,14 @@ const installPromptHandler = (event) => {
   installEvent.value = event;
 };
 
-
-
-
-window.addEventListener('beforeinstallprompt', installPromptHandler);
+window.addEventListener("beforeinstallprompt", installPromptHandler);
 
 onBeforeUnmount(() => {
-  window.removeEventListener('beforeinstallprompt', installPromptHandler);
-  window.removeEventListener('beforeunload', save);
-  window.removeEventListener('visibilitychange', save);
+  window.removeEventListener("beforeinstallprompt", installPromptHandler);
+  window.removeEventListener("beforeunload", save);
+  window.removeEventListener("visibilitychange", save);
   clearTimeout(timer.value);
 });
-
 </script>
 
 <style scoped>

@@ -1,27 +1,55 @@
 <template>
-<div>
+  <div>
     <h5>About kNote</h5>
     <p>A simple note-taking app to manage your thoughts and ideas.</p>
     <h6>Usage Tips:</h6>
     <ul>
-    <li>
-        Press <q-icon name="add" size="md" class="q-mr-sm" /> to add a note.
-    </li>
-    <li>Swipe right to delete a note.</li>
-    <li>Swipe left to mark/unmark a note as done.</li>
+      <li>
+        <strong>Add</strong> a note: press
+        <q-icon name="add" size="md" class="q-mr-sm" />.
+      </li>
+      <li><strong>Delete</strong> a note: swipe right</li>
+      <li><strong>Toggle</strong> a note as done/undone: swipe left</li>
+      <li><strong>Edit</strong> a note: double click</li>
     </ul>
-    <p><strong>License:</strong> MIT</p>
+    <p>
+      <strong>License:</strong>
+      <a
+        href="https://github.com/cattabiani/knote_quasar_pwa/blob/main/LICENSE"
+        target="_blank"
+        rel="noopener"
+        >MIT</a
+      >
+    </p>
+    <p>
+      <strong>Repository:</strong>
+      <a
+        href="https://github.com/cattabiani/knote_quasar_pwa"
+        target="_blank"
+        rel="noopener"
+        >View on GitHub</a
+      >
+    </p>
+    <p>
+      <strong>Star:</strong>
+      <a
+        href="https://github.com/cattabiani/knote_quasar_pwa/stargazers"
+        target="_blank"
+        rel="noopener"
+      >
+        Give a Star on GitHub!
+      </a>
+    </p>
     <p><strong>Author:</strong> Alessandro Cattabiani</p>
-</div>
+  </div>
 </template>
 
 <script>
 export default {
-name: 'AboutContent',
+  name: "AboutContent",
 };
 </script>
 
 <style>
 /* Optional styles */
 </style>
-  

@@ -34,11 +34,13 @@ Visit `http://localhost:9000` in your browser to access the app and start using 
 To deploy the application on GitHub Pages, follow these steps:
 
 1. Build the project:
+
 ```bash
 npm run build
 ```
 
 2. Navigate to the `dist/spa` directory:
+
 ```bash
 cd dist/spa
 ```
