@@ -44,10 +44,25 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "AboutContent",
-};
+<script setup>
+import { onMounted } from "vue";
+import { useQuasar } from "quasar";
+
+const $q = useQuasar();
+
+function checkConnection() {
+  if (!navigator.onLine) {
+    $q.notify({
+      message: "No internet connection. Some features may not work.",
+      color: "negative",
+      icon: "wifi_off",
+    });
+  }
+}
+
+onMounted(() => {
+  checkConnection();
+});
 </script>
 
 <style>
