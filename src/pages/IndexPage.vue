@@ -13,7 +13,7 @@
         <q-btn
           flat
           icon="checklist"
-          @click="isCheckList = !isCheckList"
+          @click="store.isCheckList = !store.isCheckList"
           class="q-ml-md bg-white text-primary"
           aria-label="Activate Checklist Mode"
         />
@@ -25,24 +25,13 @@
           aria-label="Add a new note"
         />
       </q-toolbar>
-      <q-toolbar v-if="installEvent">
-        <q-btn
-          flat
-          icon="download"
-          @click="installEvent.prompt()"
-          class="q-ml-auto q-mr-auto bg-white text-primary"
-          aria-label="Install kNote"
-        >
-          Install me!
-        </q-btn>
-      </q-toolbar>
     </q-header>
 
     <q-page-container>
       <q-page>
         <q-list bordered class="q-my-md">
           <q-slide-item
-            v-for="(note, index) in notes.slice().reverse()"
+            v-for="(note, index) in store.notes.slice().reverse()"
             :key="index"
             @left="(event) => onLeft(event, rIndex(index))"
             @right="(event) => onRight(event, rIndex(index))"
@@ -64,7 +53,7 @@
               <q-item-section
                 lines="2"
                 :class="[
-                  note.done && !isCheckList
+                  note.done && !store.isCheckList
                     ? 'text-decoration-line-through'
                     : '',
                 ]"
@@ -74,12 +63,12 @@
                   style="display: flex; align-items: left"
                 >
                   <q-icon
-                    v-if="isCheckList && note.done"
+                    v-if="store.isCheckList && note.done"
                     name="check_circle"
                     class="text-green q-mr-md"
                   />
                   <q-icon
-                    v-else-if="isCheckList && !note.done"
+                    v-else-if="store.isCheckList && !note.done"
                     name="radio_button_unchecked"
                     class="q-mr-md"
                   />
@@ -91,11 +80,12 @@
         </q-list>
 
         <!-- empty state -->
-        <div v-if="notes.length === 0" style="padding: 20px">
+        <div v-if="store.notes.length === 0" style="padding: 20px">
           <AboutContent />
         </div>
       </q-page>
     </q-page-container>
+
 
     <!-- Modal for adding/editing a note -->
     <q-dialog v-model="isEditNoteModalVisible" persistent @open="focusInput">
@@ -136,22 +126,20 @@
 <script setup>
 import { ref, computed, nextTick, onBeforeUnmount } from "vue";
 import { v4 as uuidv4 } from "uuid";
-import { LocalStorage, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 import AboutContent from "../components/AboutContent.vue";
+import { useStore } from "src/stores/store";
 
-// State variables
-const storedNotes = LocalStorage.getItem("notes") || [];
-const notes = ref(
-  Array.isArray(storedNotes) ? storedNotes : JSON.parse(storedNotes || "[]")
-);
+const store = useStore();
+
+
 const editNoteId = ref(-1);
 const editNoteText = ref("");
 const noteInput = ref(null);
 const timer = ref(null);
 const isAboutDialogVisible = ref(false);
 const $q = useQuasar();
-const installEvent = ref(null);
-const isCheckList = ref(LocalStorage.getItem("isCheckList") || false);
+let notification = null;
 
 // Method to finalize actions after a short delay
 const finalize = (reset) => {
@@ -175,7 +163,7 @@ const onLeft = ({ reset }, index) => {
 
 // Toggling the 'done' status of a note
 const onRight = ({ reset }, index) => {
-  notes.value[index].done = !notes.value[index].done;
+  store.notes[index].done = !store.notes[index].done;
   finalize(reset);
 };
 
@@ -183,28 +171,28 @@ const onRight = ({ reset }, index) => {
 const isEditNoteModalVisible = computed(() => editNoteId.value >= 0);
 
 // Reverse index for slide item
-const rIndex = (index) => notes.value.length - 1 - index;
+const rIndex = (index) => store.notes.length - 1 - index;
 
 // Add a new note or edit an existing one
 const addNote = () => {
   editNoteText.value = "";
-  editNoteId.value = notes.value.length; // Set to the new note index
+  editNoteId.value = store.notes.length; // Set to the new note index
   focusInput();
 };
 
 // Save note and close the modal
 const saveAndCloseModal = () => {
-  if (editNoteId.value >= notes.value.length) {
-    notes.value.push({ id: uuidv4(), text: editNoteText.value, done: false });
+  if (editNoteId.value >= store.notes.length) {
+    store.notes.push({ id: uuidv4(), text: editNoteText.value, done: false });
   } else {
-    notes.value[editNoteId.value].text = editNoteText.value;
+    store.notes[editNoteId.value].text = editNoteText.value;
   }
   closeModal();
 };
 
 // Delete a note at the given index
 const deleteNote = (index) => {
-  notes.value.splice(index, 1);
+  store.notes.splice(index, 1);
 };
 
 // Close the modal and reset the edit note ID
@@ -222,39 +210,44 @@ const focusInput = () => {
 
 // Load the note text into the input for editing
 const editNote = (index) => {
-  editNoteText.value = notes.value[index].text;
+  editNoteText.value = store.notes[index].text;
   editNoteId.value = index;
   focusInput();
 };
 
-const save = () => {
-  LocalStorage.set("notes", notes.value);
-  LocalStorage.set("isCheckList", isCheckList.value);
-};
 
-window.addEventListener("beforeunload", () => {
-  save();
-});
-
-window.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") {
-    save();
-  }
-});
 
 const installPromptHandler = (event) => {
   event.preventDefault(); // Prevent the default prompt from appearing
 
-  installEvent.value = event;
+  notification = $q.notify({
+    actions: [
+      {
+        label: 'Install',
+        color: 'white',
+        handler: () => {
+          if (event) {
+            event.prompt(); // Show the install prompt
+            notification.close(); // Dismiss the notification
+          }
+        }
+      },
+      {
+        label: 'Dismiss',
+        color: 'white',
+        handler: () => {
+          notification.close(); // Dismiss the notification
+        }
+      }
+    ],
+    timeout: 0,  // Prevent it from auto-closing
+  });
 };
 
 window.addEventListener("beforeinstallprompt", installPromptHandler);
 
 onBeforeUnmount(() => {
   window.removeEventListener("beforeinstallprompt", installPromptHandler);
-  window.removeEventListener("beforeunload", save);
-  window.removeEventListener("visibilitychange", save);
-  clearTimeout(timer.value);
 });
 </script>
 
