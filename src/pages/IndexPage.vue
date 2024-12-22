@@ -33,7 +33,7 @@
           <q-slide-item
             v-for="(note, index) in store.notes.slice().reverse()"
             :key="index"
-            @left="(event) => onLeft(event, rIndex(index))"
+            @left="onLeft(rIndex(index))"
             @right="(event) => onRight(event, rIndex(index))"
             left-color="red"
             right-color="green"
@@ -154,11 +154,8 @@ const showAbout = () => {
 };
 
 // Handling note deletion on swipe left
-const onLeft = ({ reset }, index) => {
-  finalize(reset);
-  setTimeout(() => {
-    deleteNote(index);
-  }, 1);
+const onLeft = (index) => {
+  deleteNote(index);
 };
 
 // Toggling the 'done' status of a note
