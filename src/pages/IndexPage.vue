@@ -32,7 +32,7 @@
         <q-list bordered class="q-my-md">
           <q-slide-item
             v-for="(note, index) in store.notes.slice().reverse()"
-            :key="index"
+            :key="note.id"
             @left="onLeft(rIndex(index))"
             @right="(event) => onRight(event, rIndex(index))"
             left-color="red"
@@ -84,7 +84,7 @@
           <AboutContent />
         </div>
       </q-page>
-    </q-page-container>
+    </q-page-container>index
 
 
     <!-- Modal for adding/editing a note -->
@@ -160,6 +160,7 @@ const onLeft = (index) => {
 
 // Toggling the 'done' status of a note
 const onRight = ({ reset }, index) => {
+
   store.notes[index].done = !store.notes[index].done;
   finalize(reset);
 };
